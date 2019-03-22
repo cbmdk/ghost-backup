@@ -65,7 +65,7 @@ def pack_files():
             config.get('telegram_user_id')
         )
 
-def upload_files():
+def upload_files1():
     oauth_config = config['oauth']
 
     credentials = Credentials(
@@ -88,6 +88,45 @@ def upload_files():
         fileId=config['backup_file_id'],
         media_body=media
     ).execute()
+
+LOCALFILE = '{0}.tar.gz'.format(config['timestamp'])
+BACKUPPATH = '/{0}.tar.gz'.format(config['timestamp'])'
+TOKEN = '7nq0w3o09ikwr0j'
+
+def upload_files():
+print("Creating a Dropbox object...")
+    dbx = dropbox.Dropbox(TOKEN)
+
+    # Check that the access token is valid
+    try:
+        dbx.users_get_current_account()
+    except AuthError as err:
+        sys.exit(
+            "ERROR: Invalid access token; try re-generating an access token from the app console on the web.")
+
+    try:
+        checkFileDetails()
+    except Error as err:
+        sys.exit("Error while checking file details")
+
+
+    with open(LOCALFILE, 'rb') as f:
+        # We use WriteMode=overwrite to make sure that the settings in the file
+        # are changed on upload
+        print("Uploading " + LOCALFILE + " to Dropbox as " + BACKUPPATH + "...")
+        try:
+            dbx.files_upload(f.read(), BACKUPPATH, mode=WriteMode('overwrite'))
+        except ApiError as err:
+            # This checks for the specific error where a user doesn't have enough Dropbox space quota to upload this file
+            if (err.error.is_path() and
+                    err.error.get_path().error.is_insufficient_space()):
+                sys.exit("ERROR: Cannot back up; insufficient space.")
+            elif err.user_message_text:
+                print(err.user_message_text)
+                sys.exit()
+            else:
+                print(err)
+                sys.exit()
 
 def delete_backups():
     execute_command('rm {0} {1}.tar.gz'.format(config['dump_file'], config['timestamp']))

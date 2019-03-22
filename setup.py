@@ -68,105 +68,105 @@ def display_input_prompt(prompt_msg, prompt_default_value=''):
 
     return backup_options[backup_key]
 
-def get_credentials():
-    from google_auth_oauthlib.flow import InstalledAppFlow
+# def get_credentials():
+#     from google_auth_oauthlib.flow import InstalledAppFlow
 
-    SCOPES = ['https://www.googleapis.com/auth/drive.file']
-    client_config = {
-        "installed": {
-            "auth_uri": "https://accounts.google.com/o/oauth2/auth",
-            "token_uri": "https://accounts.google.com/o/oauth2/token",
-            "redirect_uris": ["urn:ietf:wg:oauth:2.0:oob", "http://localhost"],
-            "client_id": get_ecredentials('yatch'),
-            "client_secret": get_ecredentials('bakery')
-        }
-    }
+#     SCOPES = ['https://www.googleapis.com/auth/drive.file']
+#     client_config = {
+#         "installed": {
+#             "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+#             "token_uri": "https://accounts.google.com/o/oauth2/token",
+#             "redirect_uris": ["urn:ietf:wg:oauth:2.0:oob", "http://localhost"],
+#             "client_id": get_ecredentials('yatch'),
+#             "client_secret": get_ecredentials('bakery')
+#         }
+#     }
 
-    flow = InstalledAppFlow.from_client_config(client_config, SCOPES)
-    print('\n')
+#     flow = InstalledAppFlow.from_client_config(client_config, SCOPES)
+#     print('\n')
 
-    try:
-        credentials = flow.run_console(
-            authorization_prompt_message='Please visit the below URL to get '
-            'autorization\ncode to authorize Google Drive access\n\n{url}',
-            authorization_code_message='\nAuthorization Code\n'
-        )
+#     try:
+#         credentials = flow.run_console(
+#             authorization_prompt_message='Please visit the below URL to get '
+#             'autorization\ncode to authorize Google Drive access\n\n{url}',
+#             authorization_code_message='\nAuthorization Code\n'
+#         )
 
-        client_config['installed']['refresh_token'] = credentials.refresh_token
-        client_config['installed'].pop('client_id')
-        client_config['installed'].pop('client_secret')
-        backup_options['oauth'] = client_config['installed']
-    except Exception as e:
-        error_and_exit(
-            '\nAn Error occured while authenticating Gdrive access\n{0}'.format(e))
+#         client_config['installed']['refresh_token'] = credentials.refresh_token
+#         client_config['installed'].pop('client_id')
+#         client_config['installed'].pop('client_secret')
+#         backup_options['oauth'] = client_config['installed']
+#     except Exception as e:
+#         error_and_exit(
+#             '\nAn Error occured while authenticating Gdrive access\n{0}'.format(e))
 
-    return credentials
+#     return credentials
 
-def create_backup_folder(drive):
-    folder_query = ('mimeType="application/vnd.google-apps.folder" and '
-                    'name = "Ghost Backup" and trashed = False')
+# def create_backup_folder(drive):
+#     folder_query = ('mimeType="application/vnd.google-apps.folder" and '
+#                     'name = "Ghost Backup" and trashed = False')
 
-    try:
-        resp = drive.files().list(q=folder_query).execute()
-    except Exception as e:
-        error_and_exit(
-            '\n{0}\nAn Error occured while hitting request to Gdrive'.format(e))
+#     try:
+#         resp = drive.files().list(q=folder_query).execute()
+#     except Exception as e:
+#         error_and_exit(
+#             '\n{0}\nAn Error occured while hitting request to Gdrive'.format(e))
 
-    use_existing_folder = False
+#     use_existing_folder = False
 
-    if len(resp.get('files')) > 0:
-        use_existing_folder = display_yn_prompt("Ghost Backup folder found "
-                "on your Google Drive.\nDo you want to use it as your backup folder?\n"
-                "(No will create a new folder with the same name)", '', 'Y', False)
+#     if len(resp.get('files')) > 0:
+#         use_existing_folder = display_yn_prompt("Ghost Backup folder found "
+#                 "on your Google Drive.\nDo you want to use it as your backup folder?\n"
+#                 "(No will create a new folder with the same name)", '', 'Y', False)
 
-    if use_existing_folder:
-        resp = resp['files'][0]
-        display_msg('Using existing folder', 'bold')
-    else:
-        file_metadata = {
-            'name': 'Ghost Backup',
-            'mimeType': 'application/vnd.google-apps.folder'
-        }
+#     if use_existing_folder:
+#         resp = resp['files'][0]
+#         display_msg('Using existing folder', 'bold')
+#     else:
+#         file_metadata = {
+#             'name': 'Ghost Backup',
+#             'mimeType': 'application/vnd.google-apps.folder'
+#         }
 
-        resp = drive.files().create(body=file_metadata, fields='id').execute()
+#         resp = drive.files().create(body=file_metadata, fields='id').execute()
 
-    return resp.get('id')
+#     return resp.get('id')
 
-def setup_gdrive():
-    credentials = get_credentials()
+# def setup_gdrive():
+#     credentials = get_credentials()
 
-    display_msg('\nPlease wait till the Gdrive setup is complete..', 'bold')
+#     display_msg('\nPlease wait till the Gdrive setup is complete..', 'bold')
 
-    from apiclient.discovery import build
-    from apiclient.http import MediaFileUpload
+#     from apiclient.discovery import build
+#     from apiclient.http import MediaFileUpload
 
-    drive = build('drive', 'v3', credentials=credentials)
+#     drive = build('drive', 'v3', credentials=credentials)
 
-    file_id = create_backup_folder(drive)
+#     file_id = create_backup_folder(drive)
 
-    if file_id is not None:
-        file_metadata = {
-            'name': 'backup.tar.gz',
-            'parents': [file_id],
-            'mimeType': 'application/gzip'
-        }
+#     if file_id is not None:
+#         file_metadata = {
+#             'name': 'backup.tar.gz',
+#             'parents': [file_id],
+#             'mimeType': 'application/gzip'
+#         }
 
-        status = execute_command(
-            "echo 'This text file is the initial backup' > backup.txt && "
-            "tar -czvf backup.tar.gz backup.txt"
-        )
+#         status = execute_command(
+#             "echo 'This text file is the initial backup' > backup.txt && "
+#             "tar -czvf backup.tar.gz backup.txt"
+#         )
 
-        if status.returncode == 0:
-            media = MediaFileUpload('backup.tar.gz')
-            resp = drive.files().create(body=file_metadata, media_body=media,
-                                            fields='id').execute()
-            backup_options['backup_file_id'] = resp.get('id')
-            execute_command('rm backup.txt backup.tar.gz')
-            display_msg('Google Drive configured successfully', 'options')
-        else:
-            error_and_exit('\nInitial file creation failed')
-    else:
-        error_and_exit('\nAn Error occured while creating folder on Gdrive')
+#         if status.returncode == 0:
+#             media = MediaFileUpload('backup.tar.gz')
+#             resp = drive.files().create(body=file_metadata, media_body=media,
+#                                             fields='id').execute()
+#             backup_options['backup_file_id'] = resp.get('id')
+#             execute_command('rm backup.txt backup.tar.gz')
+#             display_msg('Google Drive configured successfully', 'options')
+#         else:
+#             error_and_exit('\nInitial file creation failed')
+#     else:
+#         error_and_exit('\nAn Error occured while creating folder on Gdrive')
 
 def copy_files():
     if not os.path.isdir('/opt/ghost-backup'):
@@ -275,9 +275,10 @@ def main():
 
     display_msg('\nPlease wait to complete requirements download...', None, '')
 
-    install_package("google-api-python-client python-crontab "
+    install_package("google-api-python-client dropbox python-crontab "
                     "google-auth-httplib2 google-auth-oauthlib google-auth")
-    setup_gdrive()
+    # setup_gdrive()
+    setup_dropbox()
     copy_files()
     setup_cron()
 
