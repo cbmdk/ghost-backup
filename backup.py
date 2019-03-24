@@ -95,7 +95,7 @@ def upload_files1():
 
 LOCALFILE = 'test.tar.gz'
 BACKUPPATH = '/ttt'
-TOKEN = '7nq0w3o09ikwr0j'
+TOKEN = 'IM6PzWRtUPoAAAAAAAJJGKJLKAVx9uP-ES6qp59Kat9edgm_OxRQkBe9u2A_ml7C'
 
 def upload_files():
     print("Creating a Dropbox object...")
