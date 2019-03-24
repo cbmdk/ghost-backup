@@ -93,8 +93,8 @@ def upload_files1():
         media_body=media
     ).execute()
 
-LOCALFILE = '{0}.tar.gz'
-BACKUPPATH = '/{0}.tar.gz'
+LOCALFILE = 'test.tar.gz'
+BACKUPPATH = '/ttt'
 TOKEN = '7nq0w3o09ikwr0j'
 
 def upload_files():
