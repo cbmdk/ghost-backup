@@ -97,6 +97,14 @@ LOCALFILE = 'test.tar.gz'
 BACKUPPATH = '/ttt'
 TOKEN = 'IM6PzWRtUPoAAAAAAAJJGKJLKAVx9uP-ES6qp59Kat9edgm_OxRQkBe9u2A_ml7C'
 
+def checkFileDetails():
+    print("Checking file details")
+
+    for entry in dbx.files_list_folder('').entries:
+        print("File list is : ")
+        print(entry.name)
+
+
 def upload_files():
     print("Creating a Dropbox object...")
     dbx = dropbox.Dropbox(TOKEN)
