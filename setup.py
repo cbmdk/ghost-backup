@@ -278,7 +278,7 @@ def main():
     install_package("google-api-python-client dropbox python-crontab "
                     "google-auth-httplib2 google-auth-oauthlib google-auth")
     # setup_gdrive()
-    setup_dropbox()
+    #setup_dropbox()
     copy_files()
     setup_cron()
 
