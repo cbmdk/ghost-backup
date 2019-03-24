@@ -282,11 +282,11 @@ def main():
     copy_files()
     setup_cron()
 
-    display_yn_prompt("Would you like to get notifications\n"
+    #display_yn_prompt("Would you like to get notifications\n"
                       "on Telegram about backup status?", 'notification', 'Y')
 
-    if backup_options['notification']:
-        setup_notifications()
+    #if backup_options['notification']:
+    #    setup_notifications()
 
     write_config()
 
