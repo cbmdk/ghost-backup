@@ -283,7 +283,7 @@ def main():
     setup_cron()
 
     #display_yn_prompt("Would you like to get notifications\n"
-                      "on Telegram about backup status?", 'notification', 'Y')
+    #                  "on Telegram about backup status?", 'notification', 'Y')
 
     #if backup_options['notification']:
     #    setup_notifications()
