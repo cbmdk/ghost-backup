@@ -6,6 +6,10 @@ from apiclient.discovery import build
 from apiclient.http import MediaFileUpload
 from google.oauth2.credentials import Credentials
 from traceback import format_exc
+import dropbox
+
+from dropbox.files import WriteMode
+from dropbox.exceptions import ApiError, AuthError
 
 from misc import (
     error_and_exit,
@@ -89,12 +93,12 @@ def upload_files1():
         media_body=media
     ).execute()
 
-LOCALFILE = '{0}.tar.gz'.format(config['timestamp'])
-BACKUPPATH = '/{0}.tar.gz'.format(config['timestamp'])'
+LOCALFILE = '{0}.tar.gz'
+BACKUPPATH = '/{0}.tar.gz'
 TOKEN = '7nq0w3o09ikwr0j'
 
 def upload_files():
-print("Creating a Dropbox object...")
+    print("Creating a Dropbox object...")
     dbx = dropbox.Dropbox(TOKEN)
 
     # Check that the access token is valid
