@@ -22,7 +22,9 @@ from misc import (
 config = {}
 
 def read_config():
-    config_file = open('/opt/ghost-backup/.config.json', 'r')
+    config_file = open('/Users/cbm/code/python/ghost-backup/.config.json', 'r')
+    #config_file = open('/opt/ghost-backup/.config.json', 'r')
+
     config_file_json = json.loads(config_file.read())
     config_file_json['timestamp'] = datetime.datetime.fromtimestamp(
         time.time()).strftime('%Y%m%d%H%M%S')
@@ -93,7 +95,7 @@ def upload_files1():
         media_body=media
     ).execute()
 
-LOCALFILE = 'test.tar.gz'
+LOCALFILE = '{0}.tar.gz'.format(config['timestamp']
 BACKUPPATH = '/ttt'
 TOKEN = 'IM6PzWRtUPoAAAAAAAJJGKJLKAVx9uP-ES6qp59Kat9edgm_OxRQkBe9u2A_ml7C'
 
@@ -116,10 +118,10 @@ def upload_files():
         sys.exit(
             "ERROR: Invalid access token; try re-generating an access token from the app console on the web.")
 
-    try:
-        checkFileDetails()
-    except Error as err:
-        sys.exit("Error while checking file details")
+    # try:
+    #     checkFileDetails()
+    # except Error as err:
+    #     sys.exit("Error while checking file details")
 
 
     with open(LOCALFILE, 'rb') as f:
