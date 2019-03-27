@@ -22,8 +22,8 @@ from misc import (
 config = {}
 
 def read_config():
-    config_file = open('/Users/cbm/code/python/ghost-backup/.config.json', 'r')
-    #config_file = open('/opt/ghost-backup/.config.json', 'r')
+    #config_file = open('/Users/cbm/code/python/ghost-backup/.config.json', 'r')
+    config_file = open('/opt/ghost-backup/.config.json', 'r')
 
     config_file_json = json.loads(config_file.read())
     config_file_json['timestamp'] = datetime.datetime.fromtimestamp(
@@ -119,7 +119,7 @@ def upload_files():
             "ERROR: Invalid access token; try re-generating an access token from the app console on the web.")
 
     # try:
-    #     checkFileDetails()
+         checkFileDetails()
     # except Error as err:
     #     sys.exit("Error while checking file details")
 
