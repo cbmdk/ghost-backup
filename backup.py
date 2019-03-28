@@ -2,14 +2,18 @@ import datetime
 import os
 import json
 import time
+import sys
+import dropbox
+
 from apiclient.discovery import build
 from apiclient.http import MediaFileUpload
 from google.oauth2.credentials import Credentials
 from traceback import format_exc
-import dropbox
+
 
 from dropbox.files import WriteMode
 from dropbox.exceptions import ApiError, AuthError
+
 
 from misc import (
     error_and_exit,
@@ -22,9 +26,7 @@ from misc import (
 config = {}
 
 def read_config():
-    #config_file = open('/Users/cbm/code/python/ghost-backup/.config.json', 'r')
     config_file = open('/opt/ghost-backup/.config.json', 'r')
-
     config_file_json = json.loads(config_file.read())
     config_file_json['timestamp'] = datetime.datetime.fromtimestamp(
         time.time()).strftime('%Y%m%d%H%M%S')
@@ -71,7 +73,7 @@ def pack_files():
             config.get('telegram_user_id')
         )
 
-def upload_files1():
+def upload_files():
     oauth_config = config['oauth']
 
     credentials = Credentials(
@@ -95,35 +97,30 @@ def upload_files1():
         media_body=media
     ).execute()
 
-LOCALFILE = '{0}.tar.gz'.format(config['timestamp']
-BACKUPPATH = '/ttt'
+def delete_backups():
+    execute_command('rm {0} {1}.tar.gz'.format(config['dump_file'], config['timestamp']))
+
+
+
+
+
+
+def main():
+    read_config()
+    dump_db()
+    pack_files()
+    upload_files()
+    delete_backups()
+    send_notif(config.get('telegram_user_id'), 'Backup completed successfully!!!')
+
 TOKEN = 'IM6PzWRtUPoAAAAAAAJJGKJLKAVx9uP-ES6qp59Kat9edgm_OxRQkBe9u2A_ml7C'
 
-def checkFileDetails():
-    print("Checking file details")
-
-    for entry in dbx.files_list_folder('').entries:
-        print("File list is : ")
-        print(entry.name)
+LOCALFILE = '{0}.tar.gz'.format(config['timestamp'])'
+BACKUPPATH = '/{0}.tar.gz'.format(config['timestamp'])' # Keep the forward slash before destination filename
 
 
-def upload_files():
-    print("Creating a Dropbox object...")
-    dbx = dropbox.Dropbox(TOKEN)
-
-    # Check that the access token is valid
-    try:
-        dbx.users_get_current_account()
-    except AuthError as err:
-        sys.exit(
-            "ERROR: Invalid access token; try re-generating an access token from the app console on the web.")
-
-    # try:
-         checkFileDetails()
-    # except Error as err:
-    #     sys.exit("Error while checking file details")
-
-
+# Uploads contents of LOCALFILE to Dropbox
+def dropbox_backup():
     with open(LOCALFILE, 'rb') as f:
         # We use WriteMode=overwrite to make sure that the settings in the file
         # are changed on upload
@@ -142,20 +139,56 @@ def upload_files():
                 print(err)
                 sys.exit()
 
-def delete_backups():
-    execute_command('rm {0} {1}.tar.gz'.format(config['dump_file'], config['timestamp']))
 
-def main():
-    read_config()
-    dump_db()
-    pack_files()
-    upload_files()
-    delete_backups()
-    send_notif(config.get('telegram_user_id'), 'Backup completed successfully!!!')
+# Adding few functions to check file details
+def checkFileDetails():
+    print("Checking file details")
+
+    for entry in dbx.files_list_folder('').entries:
+        print("File list is : ")
+        print(entry.name)
+
+
 
 if __name__ == '__main__':
     try:
-        main()
+        #main()
+        read_config()
+        dump_db()
+        pack_files()
+        #upload_files()
+
+        if (len(TOKEN) == 0):
+        sys.exit("ERROR: Looks like you didn't add your access token. Open up backup-and-restore-example.py in a text editor and paste in your token in line 14.")
+
+    # Create an instance of a Dropbox class, which can make requests to the API.
+        print("Creating a Dropbox object...")
+        dbx = dropbox.Dropbox(TOKEN)
+
+    # Check that the access token is valid
+        try:
+            dbx.users_get_current_account()
+        except AuthError as err:
+            sys.exit(
+                "ERROR: Invalid access token; try re-generating an access token from the app console on the web.")
+
+        try:
+            checkFileDetails()
+        except Error as err:
+            sys.exit("Error while checking file details")
+
+    print("Creating backup...")
+    # Create a backup of the current settings file
+    dropbox_backup()
+
+    print("Done!")
+
+
+
+        
+        delete_backups()
+
+
     except Exception as e:
         error_and_exit("\nFollowing error occured:\n{0}\n\n"
                        "More info about the error:\n{1}".format(e, format_exc()),
