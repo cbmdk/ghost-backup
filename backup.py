@@ -161,7 +161,7 @@ if __name__ == '__main__':
         #upload_files()
 
         if (len(TOKEN) == 0):
-        sys.exit("ERROR: Looks like you didn't add your access token. Open up backup-and-restore-example.py in a text editor and paste in your token in line 14.")
+            sys.exit("ERROR: Looks like you didn't add your access token. Open up backup-and-restore-example.py in a text editor and paste in your token in line 14.")
 
     # Create an instance of a Dropbox class, which can make requests to the API.
         print("Creating a Dropbox object...")
@@ -179,17 +179,12 @@ if __name__ == '__main__':
         except Error as err:
             sys.exit("Error while checking file details")
 
-    print("Creating backup...")
+        print("Creating backup...")
     # Create a backup of the current settings file
-    dropbox_backup()
+        dropbox_backup()
 
-    print("Done!")
-
-
-
-        
+        print("Done!")
         delete_backups()
-
 
     except Exception as e:
         error_and_exit("\nFollowing error occured:\n{0}\n\n"
