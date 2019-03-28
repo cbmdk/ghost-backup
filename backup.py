@@ -128,7 +128,7 @@ def dropbox_backup():
     with open('{0}.tar.gz'.format(config['timestamp']), 'rb') as f:
         # We use WriteMode=overwrite to make sure that the settings in the file
         # are changed on upload
-        print("Uploading " + '{0}.tar.gz'.format(config['timestamp']) + " to Dropbox as " + BACKUPPATH + "...")
+        print("Uploading " + '{0}.tar.gz'.format(config['timestamp']) + " to Dropbox as " + '/{0}.tar.gz'.format(config['timestamp']) + "...")
         try:
             dbx.files_upload(f.read(), '/{0}.tar.gz'.format(config['timestamp']), mode=WriteMode('overwrite'))
         except ApiError as err:
