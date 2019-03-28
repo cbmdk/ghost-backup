@@ -27,8 +27,8 @@ config = {}
 
 TOKEN = 'IM6PzWRtUPoAAAAAAAJJGKJLKAVx9uP-ES6qp59Kat9edgm_OxRQkBe9u2A_ml7C'
 
-LOCALFILE = '{0}.tar.gz'.format(config['timestamp'])
-BACKUPPATH = '/{0}.tar.gz'.format(config['timestamp']) # Keep the forward slash before destination filename
+# LOCALFILE = '{0}.tar.gz'.format(config['timestamp'])
+# BACKUPPATH = '/{0}.tar.gz'.format(config['timestamp']) # Keep the forward slash before destination filename
 
 
 def read_config():
@@ -119,16 +119,18 @@ def main():
     delete_backups()
     send_notif(config.get('telegram_user_id'), 'Backup completed successfully!!!')
 
+LOCALFILE = '{0}.tar.gz'.format(config['timestamp'])
+BACKUPPATH = '/{0}.tar.gz'.format(config['timestamp']) # Keep the forward slash before destination filename
 
 
 # Uploads contents of LOCALFILE to Dropbox
 def dropbox_backup():
-    with open(LOCALFILE, 'rb') as f:
+    with open('{0}.tar.gz'.format(config['timestamp']), 'rb') as f:
         # We use WriteMode=overwrite to make sure that the settings in the file
         # are changed on upload
-        print("Uploading " + LOCALFILE + " to Dropbox as " + BACKUPPATH + "...")
+        print("Uploading " + '{0}.tar.gz'.format(config['timestamp']) + " to Dropbox as " + BACKUPPATH + "...")
         try:
-            dbx.files_upload(f.read(), BACKUPPATH, mode=WriteMode('overwrite'))
+            dbx.files_upload(f.read(), '/{0}.tar.gz'.format(config['timestamp']), mode=WriteMode('overwrite'))
         except ApiError as err:
             # This checks for the specific error where a user doesn't have enough Dropbox space quota to upload this file
             if (err.error.is_path() and
