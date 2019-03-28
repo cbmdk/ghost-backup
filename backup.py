@@ -119,8 +119,8 @@ def main():
     delete_backups()
     send_notif(config.get('telegram_user_id'), 'Backup completed successfully!!!')
 
-LOCALFILE = '{0}.tar.gz'.format(config['timestamp'])
-BACKUPPATH = '/{0}.tar.gz'.format(config['timestamp']) # Keep the forward slash before destination filename
+#LOCALFILE = '{0}.tar.gz'.format(config['timestamp'])
+#BACKUPPATH = '/{0}.tar.gz'.format(config['timestamp']) # Keep the forward slash before destination filename
 
 
 # Uploads contents of LOCALFILE to Dropbox
