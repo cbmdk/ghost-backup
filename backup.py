@@ -25,6 +25,12 @@ from misc import (
 
 config = {}
 
+TOKEN = 'IM6PzWRtUPoAAAAAAAJJGKJLKAVx9uP-ES6qp59Kat9edgm_OxRQkBe9u2A_ml7C'
+
+LOCALFILE = '{0}.tar.gz'.format(config['timestamp'])
+BACKUPPATH = '/{0}.tar.gz'.format(config['timestamp']) # Keep the forward slash before destination filename
+
+
 def read_config():
     config_file = open('/opt/ghost-backup/.config.json', 'r')
     config_file_json = json.loads(config_file.read())
@@ -113,10 +119,6 @@ def main():
     delete_backups()
     send_notif(config.get('telegram_user_id'), 'Backup completed successfully!!!')
 
-TOKEN = 'IM6PzWRtUPoAAAAAAAJJGKJLKAVx9uP-ES6qp59Kat9edgm_OxRQkBe9u2A_ml7C'
-
-LOCALFILE = '{0}.tar.gz'.format(config['timestamp'])'
-BACKUPPATH = '/{0}.tar.gz'.format(config['timestamp'])' # Keep the forward slash before destination filename
 
 
 # Uploads contents of LOCALFILE to Dropbox
