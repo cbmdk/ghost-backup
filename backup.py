@@ -127,8 +127,10 @@ def main():
 # Uploads contents of LOCALFILE to Dropbox
 def dropbox_backup():
     #with open('{0}.tar.gz'.format(config['timestamp']), 'rb') as f:
-    LOCALFILE = '{0}.tar.gz'.format(config['timestamp'])
-    BACKUPPATH = '/{0}.tar.gz'.format(config['timestamp']) # Keep the forward slash before destination filename
+    #LOCALFILE = '{0}.tar.gz'.format(config['timestamp'])
+    #BACKUPPATH = '/{0}.tar.gz'.format(config['timestamp']) # Keep the forward slash before destination filename
+    LOCALFILE = '20190330124159.tar.gz'
+    BACKUPPATH = '/20190330124159.tar.gz'
 
     with open(LOCALFILE, 'rb') as f:
         # We use WriteMode=overwrite to make sure that the settings in the file
@@ -163,8 +165,8 @@ if __name__ == '__main__':
     try:
         #main()
         read_config()
-        dump_db()
-        pack_files()
+        #dump_db()
+        #pack_files()
         #upload_files()
         print(config['timestamp'])
         if (len(TOKEN) == 0):
