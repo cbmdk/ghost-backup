@@ -130,12 +130,12 @@ def dropbox_backup():
     LOCALFILE = '{0}.tar.gz'.format(config['timestamp'])
     BACKUPPATH = '/{0}.tar.gz'.format(config['timestamp']) # Keep the forward slash before destination filename
 
-    with open('backup.log', 'rb') as f:
+    with open(LOCALFILE, 'rb') as f:
         # We use WriteMode=overwrite to make sure that the settings in the file
         # are changed on upload
-        print("Uploading " + '{0}.tar.gz'.format(config['timestamp']) + " to Dropbox as " + '/{0}.tar.gz'.format(config['timestamp']) + "...")
+        print("Uploading " + LOCALFILE + " to Dropbox as " + BACKUPPATH + "...")
         try:
-            dbx.files_upload(f.read(), '/backup.log', mode=WriteMode('overwrite'))
+            dbx.files_upload(f.read(), BACKUPPATH, mode=WriteMode('overwrite'))
         except ApiError as err:
             # This checks for the specific error where a user doesn't have enough Dropbox space quota to upload this file
             if (err.error.is_path() and
@@ -191,7 +191,7 @@ if __name__ == '__main__':
         dropbox_backup()
 
         print("Done!")
-        delete_backups()
+        #delete_backups()
 
     except Exception as e:
         error_and_exit("\nFollowing error occured:\n{0}\n\n"
