@@ -132,23 +132,50 @@ def dropbox_backup():
     #LOCALFILE = '20190330124159.tar.gz'
     #BACKUPPATH = '/20190330124159.tar.gz'
 
-    with open(LOCALFILE, 'rb') as f:
+    f = open(LOCALFILE)
+    file_size = os.path.getsize(LOCALFILE)
+
+    CHUNK_SIZE = 4 * 1024 * 1024
+
+    if file_size <= CHUNK_SIZE:
+        print dbx.files_upload(f, BACKUPPATH)
+
+    else:
+
+        upload_session_start_result = dbx.files_upload_session_start(f.read(CHUNK_SIZE))
+        cursor = dropbox.files.UploadSessionCursor(session_id=upload_session_start_result.session_id,
+                                               offset=f.tell())
+        commit = dropbox.files.CommitInfo(path=dest_path)
+
+    while f.tell() < file_size:
+        if ((file_size - f.tell()) <= CHUNK_SIZE):
+            print dbx.files_upload_session_finish(f.read(CHUNK_SIZE),
+                                            cursor,
+                                            commit)
+        else:
+            dbx.files_upload_session_append(f.read(CHUNK_SIZE),
+                                            cursor.session_id,
+                                            cursor.offset)
+            cursor.offset = f.tell()
+
+
+    #with open(LOCALFILE, 'rb') as f:
         # We use WriteMode=overwrite to make sure that the settings in the file
         # are changed on upload
-        print("Uploading " + LOCALFILE + " to Dropbox as " + BACKUPPATH + "...")
-        try:
-            dbx.files_upload(f.read(), BACKUPPATH, mode=WriteMode('overwrite'))
-        except ApiError as err:
-            # This checks for the specific error where a user doesn't have enough Dropbox space quota to upload this file
-            if (err.error.is_path() and
-                    err.error.get_path().error.is_insufficient_space()):
-                sys.exit("ERROR: Cannot back up; insufficient space.")
-            elif err.user_message_text:
-                print(err.user_message_text)
-                sys.exit()
-            else:
-                print(err)
-                sys.exit()
+    #    print("Uploading " + LOCALFILE + " to Dropbox as " + BACKUPPATH + "...")
+    #    try:
+    #        dbx.files_upload(f.read(), BACKUPPATH, mode=WriteMode('overwrite'))
+    #    except ApiError as err:
+    #        # This checks for the specific error where a user doesn't have enough Dropbox space quota to upload this file
+    #        if (err.error.is_path() and
+    #                err.error.get_path().error.is_insufficient_space()):
+    #            sys.exit("ERROR: Cannot back up; insufficient space.")
+    #        elif err.user_message_text:
+    #            print(err.user_message_text)
+    #            sys.exit()
+    #        else:
+    #            print(err)
+    #            sys.exit()
 
 
 # Adding few functions to check file details
