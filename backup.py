@@ -45,6 +45,7 @@ def dump_db():
     else:
         config['dump_path'] = os.getcwd()
 
+    print('dumping database {0}').format(config['timestamp'])
     config['dump_file'] = config['dump_path'] + '/{0}.sql'.format(config['timestamp'])
     dump_command = ("mysqldump -h{mysql_hostname} -u'{mysql_username}' "
                     "-p'{mysql_password}' {mysql_db_name} > {0}".format(
