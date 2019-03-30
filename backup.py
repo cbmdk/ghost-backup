@@ -112,7 +112,7 @@ def delete_backups():
 
 
 def main():
-    read_config()
+    #read_config()
     dump_db()
     pack_files()
     upload_files()
@@ -126,7 +126,9 @@ def main():
 # Uploads contents of LOCALFILE to Dropbox
 def dropbox_backup():
     #with open('{0}.tar.gz'.format(config['timestamp']), 'rb') as f:
-    
+    LOCALFILE = '{0}.tar.gz'.format(config['timestamp'])
+    BACKUPPATH = '/{0}.tar.gz'.format(config['timestamp']) # Keep the forward slash before destination filename
+
     with open('backup.log', 'rb') as f:
         # We use WriteMode=overwrite to make sure that the settings in the file
         # are changed on upload
@@ -163,7 +165,7 @@ if __name__ == '__main__':
         dump_db()
         pack_files()
         #upload_files()
-
+        print(config['timestamp'])
         if (len(TOKEN) == 0):
             sys.exit("ERROR: Looks like you didn't add your access token. Open up backup-and-restore-example.py in a text editor and paste in your token in line 14.")
 
