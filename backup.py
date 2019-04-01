@@ -82,13 +82,13 @@ def delete_backups():
 
 
 
-LOCALFILE = '{0}.tar.gz'.format(config['timestamp'])
+#LOCALFILE = '{0}.tar.gz'.format(config['timestamp'])
 #BACKUPPATH = '/{0}.tar.gz'.format(config['timestamp']) # Keep the forward slash before destination filename
 
 
 def ftp_files():
     srv = pysftp.Connection(host=config['ftp_server'], username=config['ftp_user'],password=config['ftp_password'])
-    srv.put(LOCALFILE)
+    srv.put('{0}.tar.gz'.format(config['timestamp']))
     srv.close()
     
 if __name__ == '__main__':
