@@ -103,11 +103,6 @@ def upload_files():
 def delete_backups():
     execute_command('rm {0} {1}.tar.gz'.format(config['dump_file'], config['timestamp']))
 
-
-
-
-
-
 def main():
     #read_config()
     dump_db()
@@ -119,9 +114,9 @@ def main():
 LOCALFILE = '{0}.tar.gz'.format(config['timestamp'])
 BACKUPPATH = '/{0}.tar.gz'.format(config['timestamp']) # Keep the forward slash before destination filename
 
-srv = pysftp.Connection(host=config['ftp_server'], username=config['ftp_user'],password=config['ftp_password'])
 
-def ftp_files
+def ftp_files():
+    srv = pysftp.Connection(host=config['ftp_server'], username=config['ftp_user'],password=config['ftp_password'])
     data = srv.listdir()
     srv.close()
     for i in data: 
@@ -160,11 +155,11 @@ def checkFileDetails():
 
 if __name__ == '__main__':
     try:
-        #main()
-        read_config()
-        dump_db()
-        pack_files()
-        #upload_files()
+        
+        #read_config()
+        #dump_db()
+        #pack_files()
+        
         
         #delete_backups()
 
