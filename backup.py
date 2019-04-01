@@ -14,7 +14,7 @@ from misc import (
     error_and_exit,
     execute_command,
     format_subprocess_error,
-    get_credentials,
+    get_ecredentials,
     send_notif
 )
 
