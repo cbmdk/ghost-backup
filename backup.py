@@ -5,8 +5,8 @@ import time
 import sys
 import pysftp
 
-from apiclient.discovery import build
-from apiclient.http import MediaFileUpload
+#from apiclient.discovery import build
+#from apiclient.http import MediaFileUpload
 from traceback import format_exc
 
 
@@ -14,7 +14,7 @@ from misc import (
     error_and_exit,
     execute_command,
     format_subprocess_error,
-    get_ecredentials,
+    get_credentials,
     send_notif
 )
 
@@ -80,13 +80,7 @@ def pack_files():
 def delete_backups():
     execute_command('rm {0} {1}.tar.gz'.format(config['dump_file'], config['timestamp']))
 
-def main():
-    #read_config()
-    dump_db()
-    pack_files()
-    #upload_files()
-    delete_backups()
-    send_notif(config.get('telegram_user_id'), 'Backup completed successfully!!!')
+
 
 LOCALFILE = '{0}.tar.gz'.format(config['timestamp'])
 BACKUPPATH = '/{0}.tar.gz'.format(config['timestamp']) # Keep the forward slash before destination filename
@@ -99,7 +93,6 @@ def ftp_files():
     
 if __name__ == '__main__':
     try:
-        
         read_config()
         #dump_db()
         #pack_files()
