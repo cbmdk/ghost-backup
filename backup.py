@@ -83,7 +83,7 @@ def delete_backups():
 
 
 LOCALFILE = '{0}.tar.gz'.format(config['timestamp'])
-BACKUPPATH = '/{0}.tar.gz'.format(config['timestamp']) # Keep the forward slash before destination filename
+#BACKUPPATH = '/{0}.tar.gz'.format(config['timestamp']) # Keep the forward slash before destination filename
 
 
 def ftp_files():
@@ -94,8 +94,8 @@ def ftp_files():
 if __name__ == '__main__':
     try:
         read_config()
-        #dump_db()
-        #pack_files()
+        dump_db()
+        pack_files()
         ftp_files()
         
         #delete_backups()
