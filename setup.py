@@ -272,10 +272,14 @@ def main():
     display_input_prompt('\nMySQL username', 'root')
     display_input_prompt('\nMySQL password')
     display_input_prompt('\nMySQL DB name')
+    
+    display_input_prompt('\nFTP Server','95.216.241.98')
+    display_input_prompt('\nFTP User','ghost')
+    display_input_prompt('\nFTP Password')
 
     display_msg('\nPlease wait to complete requirements download...', None, '')
 
-    install_package("google-api-python-client dropbox python-crontab "
+    install_package("google-api-python-client pysftp python-crontab "
                     "google-auth-httplib2 google-auth-oauthlib google-auth")
     # setup_gdrive()
     #setup_dropbox()

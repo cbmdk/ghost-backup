@@ -3,16 +3,12 @@ import os
 import json
 import time
 import sys
-import dropbox
+import pysftp
 
 from apiclient.discovery import build
 from apiclient.http import MediaFileUpload
 from google.oauth2.credentials import Credentials
 from traceback import format_exc
-
-
-from dropbox.files import WriteMode
-from dropbox.exceptions import ApiError, AuthError
 
 
 from misc import (
@@ -25,7 +21,7 @@ from misc import (
 
 config = {}
 
-TOKEN = 'IM6PzWRtUPoAAAAAAAJJGKJLKAVx9uP-ES6qp59Kat9edgm_OxRQkBe9u2A_ml7C'
+#TOKEN = 'IM6PzWRtUPoAAAAAAAJJGKJLKAVx9uP-ES6qp59Kat9edgm_OxRQkBe9u2A_ml7C'
 
 # LOCALFILE = '{0}.tar.gz'.format(config['timestamp'])
 # BACKUPPATH = '/{0}.tar.gz'.format(config['timestamp']) # Keep the forward slash before destination filename
@@ -120,43 +116,17 @@ def main():
     delete_backups()
     send_notif(config.get('telegram_user_id'), 'Backup completed successfully!!!')
 
-#LOCALFILE = '{0}.tar.gz'.format(config['timestamp'])
-#BACKUPPATH = '/{0}.tar.gz'.format(config['timestamp']) # Keep the forward slash before destination filename
+LOCALFILE = '{0}.tar.gz'.format(config['timestamp'])
+BACKUPPATH = '/{0}.tar.gz'.format(config['timestamp']) # Keep the forward slash before destination filename
 
+srv = pysftp.Connection(host=config['ftp_server'], username=config['ftp_user'],password=config['ftp_password'])
 
-# Uploads contents of LOCALFILE to Dropbox
-def dropbox_backup():
-    #with open('{0}.tar.gz'.format(config['timestamp']), 'rb') as f:
-    LOCALFILE = '{0}.tar.gz'.format(config['timestamp'])
-    BACKUPPATH = '/{0}.tar.gz'.format(config['timestamp']) # Keep the forward slash before destination filename
-    #LOCALFILE = '20190330124159.tar.gz'
-    #BACKUPPATH = '/20190330124159.tar.gz'
+def ftp_files
+    data = srv.listdir()
+    srv.close()
+    for i in data: 
+        print i
 
-    f = open(LOCALFILE)
-    file_size = os.path.getsize(LOCALFILE)
-
-    CHUNK_SIZE = 4 * 1024 * 1024
-
-    if file_size <= CHUNK_SIZE:
-        print dbx.files_upload(f, BACKUPPATH)
-
-    else:
-
-        upload_session_start_result = dbx.files_upload_session_start(f.read(CHUNK_SIZE))
-        cursor = dropbox.files.UploadSessionCursor(session_id=upload_session_start_result.session_id,
-                                               offset=f.tell())
-        commit = dropbox.files.CommitInfo(path=dest_path)
-
-    while f.tell() < file_size:
-        if ((file_size - f.tell()) <= CHUNK_SIZE):
-            print dbx.files_upload_session_finish(f.read(CHUNK_SIZE),
-                                            cursor,
-                                            commit)
-        else:
-            dbx.files_upload_session_append(f.read(CHUNK_SIZE),
-                                            cursor.session_id,
-                                            cursor.offset)
-            cursor.offset = f.tell()
 
 
     #with open(LOCALFILE, 'rb') as f:
@@ -195,31 +165,7 @@ if __name__ == '__main__':
         dump_db()
         pack_files()
         #upload_files()
-        print(config['timestamp'])
-        if (len(TOKEN) == 0):
-            sys.exit("ERROR: Looks like you didn't add your access token. Open up backup-and-restore-example.py in a text editor and paste in your token in line 14.")
-
-    # Create an instance of a Dropbox class, which can make requests to the API.
-        print("Creating a Dropbox object...")
-        dbx = dropbox.Dropbox(TOKEN)
-
-    # Check that the access token is valid
-        try:
-            dbx.users_get_current_account()
-        except AuthError as err:
-            sys.exit(
-                "ERROR: Invalid access token; try re-generating an access token from the app console on the web.")
-
-        try:
-            checkFileDetails()
-        except Error as err:
-            sys.exit("Error while checking file details")
-
-        print("Creating backup...")
-    # Create a backup of the current settings file
-        dropbox_backup()
-
-        print("Done!")
+        
         #delete_backups()
 
     except Exception as e:
