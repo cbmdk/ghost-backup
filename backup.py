@@ -100,7 +100,7 @@ def ftp_files():
 if __name__ == '__main__':
     try:
         
-        #read_config()
+        read_config()
         #dump_db()
         #pack_files()
         ftp_files()
