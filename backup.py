@@ -87,7 +87,10 @@ def delete_backups():
 
 
 def ftp_files():
-    srv = pysftp.Connection(host=config['ftp_server'], username=config['ftp_user'],password=config['ftp_password'])
+    cnopts = pysftp.CnOpts()
+    cnopts.hostkeys = None   
+
+    srv = pysftp.Connection(host=config['ftp_server'], username=config['ftp_user'],password=config['ftp_password'], cnopts=cnopts)
     srv.put('{0}.tar.gz'.format(config['timestamp']))
     srv.close()
     
