@@ -7,7 +7,6 @@ import pysftp
 
 from apiclient.discovery import build
 from apiclient.http import MediaFileUpload
-from google.oauth2.credentials import Credentials
 from traceback import format_exc
 
 
@@ -76,29 +75,7 @@ def pack_files():
             config.get('telegram_user_id')
         )
 
-def upload_files():
-    oauth_config = config['oauth']
 
-    credentials = Credentials(
-        None,
-        refresh_token=oauth_config['refresh_token'],
-        token_uri=oauth_config['token_uri'],
-        client_id=get_ecredentials('yatch'),
-        client_secret=get_ecredentials('bakery')
-    )
-    drive = build('drive', 'v3', credentials=credentials)
-
-    media = MediaFileUpload('{0}.tar.gz'.format(config['timestamp']))
-    file_metadata = {
-        'name': config['timestamp'] + '.tar.gz',
-        'mimeType': 'application/gzip'
-    }
-
-    resp = drive.files().update(
-        body=file_metadata,
-        fileId=config['backup_file_id'],
-        media_body=media
-    ).execute()
 
 def delete_backups():
     execute_command('rm {0} {1}.tar.gz'.format(config['dump_file'], config['timestamp']))
@@ -107,7 +84,7 @@ def main():
     #read_config()
     dump_db()
     pack_files()
-    upload_files()
+    #upload_files()
     delete_backups()
     send_notif(config.get('telegram_user_id'), 'Backup completed successfully!!!')
 
@@ -117,49 +94,16 @@ BACKUPPATH = '/{0}.tar.gz'.format(config['timestamp']) # Keep the forward slash 
 
 def ftp_files():
     srv = pysftp.Connection(host=config['ftp_server'], username=config['ftp_user'],password=config['ftp_password'])
-    data = srv.listdir()
+    srv.put(LOCALFILE)
     srv.close()
-    for i in data: 
-        print i
-
-
-
-    #with open(LOCALFILE, 'rb') as f:
-        # We use WriteMode=overwrite to make sure that the settings in the file
-        # are changed on upload
-    #    print("Uploading " + LOCALFILE + " to Dropbox as " + BACKUPPATH + "...")
-    #    try:
-    #        dbx.files_upload(f.read(), BACKUPPATH, mode=WriteMode('overwrite'))
-    #    except ApiError as err:
-    #        # This checks for the specific error where a user doesn't have enough Dropbox space quota to upload this file
-    #        if (err.error.is_path() and
-    #                err.error.get_path().error.is_insufficient_space()):
-    #            sys.exit("ERROR: Cannot back up; insufficient space.")
-    #        elif err.user_message_text:
-    #            print(err.user_message_text)
-    #            sys.exit()
-    #        else:
-    #            print(err)
-    #            sys.exit()
-
-
-# Adding few functions to check file details
-def checkFileDetails():
-    print("Checking file details")
-
-    for entry in dbx.files_list_folder('').entries:
-        print("File list is : ")
-        print(entry.name)
-
-
-
+    
 if __name__ == '__main__':
     try:
         
         #read_config()
         #dump_db()
         #pack_files()
-        
+        ftp_files()
         
         #delete_backups()
 
